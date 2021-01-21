@@ -2,6 +2,7 @@ import uuid
 from time import time
 
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from pytils.translit import TRANSTABLE, slugify
 
@@ -58,3 +59,20 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product,
                                 related_name='images',
                                 on_delete=models.CASCADE)
+
+
+class Comment(models.Model):
+    product = models.ForeignKey(Product, 
+                                on_delete=models.CASCADE,
+                                related_name='comments'
+    )
+    text = models.TextField(max_length=400)
+    author = models.ForeignKey(
+        get_user_model(), 
+        on_delete=models.CASCADE,
+        related_name='comments',
+)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.author} on {self.product}, created at {self.created_at}'
